@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  version: "1.0.0"
+  version: "2.13.4"
   title: Xero Assets API
-  description: This is the Xero Assets API 
+  description: The Assets API exposes fixed asset related functions of the Xero Accounting application and can be used for a variety of purposes such as creating assets, retrieving asset valuations etc.
   termsOfService: "https://developer.xero.com/xero-developer-platform-terms-conditions/"
   contact:
     name: "Xero Platform Team"
@@ -32,12 +32,7 @@ paths:
           in: query
           description: Required when retrieving a collection of assets. See Asset Status Codes
           schema: 
-            type: string
-            enum: 
-            - Draft
-            - Registered
-            - Disposed
-            example: Draft
+            $ref: '#/components/schemas/AssetStatusQueryParam'
           required: true
         - name: page
           in: query
@@ -79,12 +74,7 @@ paths:
           description: A string that can be used to filter the list to only return assets containing the text. Checks it against the AssetName, AssetNumber, Description and AssetTypeName fields.
           schema: 
             type: string
-            example: Draft
-            enum:
-            - AssetName
-            - AssetNumber
-            - Description
-            - AssetTypeName
+            example: "Company Car"
       responses:
         '200':
           description: search results matching criteria
@@ -196,6 +186,39 @@ paths:
         - Asset
       summary: adds a fixed asset
       operationId: createAsset
+      x-hasAssetsValidationError: true
+      x-example:
+        - asset:
+          is_object: true 
+          key: asset
+          keyPascal: Asset
+        - assetName:
+          key: assetname
+          keyPascal: assetName
+          keySnake: asset_name
+          csharp: AssetName
+          default: "Other Computer"
+          object: asset
+        - assetNumber:
+          key: assetnumber
+          keyPascal: assetNumber
+          keySnake: asset_number
+          csharp: AssetNumber
+          default: FA-00210
+          object: asset
+        - status:
+          is_last: true
+          nonString: true
+          key: status
+          keyPascal: Status
+          default: Draft
+          php: XeroAPI\XeroPHP\Models\Asset\AssetStatus::Draft
+          node: Asset.StatusEnum.DRAFT
+          ruby: XeroRuby::Asset::AssetStatus::DRAFT
+          python_string: DRAFT
+          java: com.xero.models.assets.AssetStatus.DRAFT
+          csharp: AssetStatus.Draft
+          object: asset
       description: Adds an asset to the system
       responses:
         '200':
@@ -294,7 +317,7 @@ paths:
         - OAuth2: [assets.read]
       tags:
         - Asset
-      summary: retrieves fixed asset by id 
+      summary: Retrieves fixed asset by id 
       operationId: getAssetById
       description: |
         By passing in the appropriate asset id, you can search for
@@ -307,7 +330,7 @@ paths:
           schema: 
             type: string
             format: uuid
-            example: "4f7bcdcb-5ec1-4258-9558-19f662fccdfe"
+            example: "00000000-0000-0000-0000-000000000000"
       responses:
         '200':
           description: search results matching criteria
@@ -430,6 +453,79 @@ paths:
         - Asset
       summary: adds a fixed asset type
       operationId: createAssetType
+      x-example:
+        - bookDepreciationSetting:
+          is_object: true
+          key: bookDepreciationSetting
+          keyPascal: BookDepreciationSetting
+        - depreciationMethod:
+          key: depreciationMethod
+          keyPascal: DepreciationMethod
+          keySnake: depreciation_method
+          object: bookDepreciationSetting
+          default: DiminishingValue100
+        - averagingMethod:
+          key: averagingMethod
+          keyPascal: AveragingMethod
+          keySnake: averaging_method
+          object: bookDepreciationSetting
+          default: ActualDays
+        - depreciationRate:
+          nonString: true
+          key: depreciationRate
+          keyPascal: DepreciationRate
+          keySnake: deprecitation_rate
+          object: bookDepreciationSetting
+          default: 40
+        - depreciationCalculationMethod:
+          key: depreciationCalculationMethod
+          keyPascal: DepreciationCalculationMethod
+          keySnake: depreciation_calculation_method
+          object: bookDepreciationSetting
+          default: None 
+          is_last: true 
+        - assetType:
+          key: assetType
+          keyPascal: AssetType
+          is_object: true 
+        - assetTypeName:
+          key: assetTypeName
+          keyPascal: AssetTypeName
+          keySnake: asset_type_name
+          object: assetType
+          default: Computer Equipment
+        - fixedAssetAccountId:
+          is_uuid: true
+          key: fixedAssetAccountId
+          keyPascal: FixedAssetAccountId
+          keySnake: fixed_asset_account_id
+          object: assetType
+          default: 00000000-0000-0000-0000-000000000000
+        - depreciationExpenseAccountId:
+          is_uuid: true
+          key: depreciationExpenseAccountId
+          keyPascal: DepreciationExpenseAccountId
+          keySnake: depreciation_expense_account_id
+          object: assetType
+          default: 00000000-0000-0000-0000-000000000000
+        - accumulatedDepreciationAccountId:
+          is_uuid: true
+          key: accumulatedDepreciationAccountId
+          keyPascal: AccumulatedDepreciationAccountId
+          keySnake: accumulated_depreciation_account_id
+          object: assetType
+          default: 00000000-0000-0000-0000-000000000000
+        - set_bookDepreciationSetting:
+          is_last: true
+          is_variable: true
+          nonString: true
+          key: bookDepreciationSetting
+          keyPascal: BookDepreciationSetting
+          default: bookDepreciationSetting
+          python: book_depreciation_setting
+          ruby: book_depreciation_setting
+          object: assetType  
+      x-hasAssetsValidationError: true
       description: Adds an fixed asset type to the system
       responses:
         '200':
@@ -544,51 +640,17 @@ components:
             email: Grant read-only access to your email
             openid: Grant read-only access to your open id
             profile: your profile information
-            accounting.transactions: Grant read-write access to bank transactions, credit notes, invoices, repeating invoices
-            accounting.transactions.read: Grant read-only access to invoices
-            accounting.reports.read: Grant read-only access to accounting reports
-            accounting.journals.read: Grant read-only access to journals
-            accounting.settings: Grant read-write access to organisation and account settings
-            accounting.settings.read: Grant read-only access to organisation and account settings
-            accounting.contacts: Grant read-write access to contacts and contact groups
-            accounting.contacts.read: Grant read-only access to contacts and contact groups
-            accounting.attachments: Grant read-write access to attachments
-            accounting.attachments.read: Grant read-only access to attachments
-            assets assets.read: Grant read-only access to fixed assets
-            bankfeeds: Grant read-write access to bankfeeds 
-            files: Grant read-write access to files and folders
-            files.read: Grant read-only access to files and folders
-            payroll: Grant read-write access to payroll
-            payroll.read: Grant read-only access to payroll
-            payroll.employees: Grant read-write access to payroll employees
-            payroll.employees.read: Grant read-only access to payroll employees
-            payroll.leaveapplications: Grant read-write access to payroll leaveapplications
-            payroll.leaveapplications.read: Grant read-only access to payroll leaveapplications
-            payroll.payitems: Grant read-write access to payroll payitems
-            payroll.payitems.read: Grant read-only access to payroll payitems
-            payroll.payrollcalendars: Grant read-write access to payroll calendars
-            payroll.payrollcalendars.read: Grant read-only access to payroll calendars
-            payroll.payruns: Grant read-write access to payroll payruns
-            payroll.payruns.read: Grant read-only access to payroll payruns
-            payroll.payslip: Grant read-write access to payroll payslips
-            payroll.payslip.read: Grant read-only access to payroll payslips
-            payroll.settings.read: Grant read-only access to payroll settings
-            payroll.superfunds: Grant read-write access to payroll superfunds
-            payroll.superfunds.read: Grant read-only access to payroll superfunds
-            payroll.superfundproducts.read: Grant read-only access to payroll superfundproducts
-            payroll.timesheets: Grant read-write access to payroll timesheets
-            payroll.timesheets.read: Grant read-only access to payroll timesheets
-            paymentservices: Grant read-write access to payment services
-            projects: Grant read-write access to projects
-            projects.read: Grant read-only access to projects
+            assets: Grant read-write access to fixed assets
+            assets.read: Grant read-only access to fixed assets
   parameters:
     requiredHeader: 
       in: header
-      name: Xero-Tenant-Id
+      name: xero-tenant-id
       description: Xero identifier for Tenant
+      example: YOUR_XERO_TENANT_ID
       schema:
         type: string
-      required: true 
+      required: true
   schemas:
     Assets:
       type: object
@@ -616,9 +678,7 @@ components:
     Asset:
       type: object
       required:
-        - assetId
         - assetName
-        - bookDepreciationSetting
       properties:
         assetId:
           type: string
@@ -629,6 +689,11 @@ components:
           type: string
           description: "The name of the asset"
           example: "Awesome Truck 3"
+        assetTypeId:
+          type: string
+          format: uuid
+          description: "The Xero-generated Id for the asset type"
+          example: "3b5b3a38-5649-495f-87a1-14a4e5918634"
         assetNumber:
           type: string
           description: "Must be unique."
@@ -640,22 +705,23 @@ components:
           example: "2015-07-01T00:00:00"
         purchasePrice:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           description: "The purchase price of the asset"
           example: "1000.0000"
+        disposalDate:
+          type: string
+          format: date
+          description: "The date the asset was disposed"
+          example: "2020-07-01T00:00:00"          
         disposalPrice:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           description: "The price the asset was disposed at"
           example: "1.0000"
         assetStatus:
-          type: string
-          description: "See Asset Status Codes."
-          example: "Draft"
-          enum:
-          - Draft  
-          - Registered  
-          - Disposed
+          $ref: '#/components/schemas/AssetStatus'
         warrantyExpiryDate:
           type: string
           description: "The date the asset’s warranty expires (if needed) YYYY-MM-DD"
@@ -674,17 +740,33 @@ components:
           example: true
         accountingBookValue:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           description: "The accounting value of the asset"
           example: 0
         isDeleteEnabledForDate:
           type: boolean
           description: "Boolean to indicate whether delete is enabled"
           example: true
+    AssetStatus:
+      type: string
+      description: "See Asset Status Codes."
+      example: "Draft"
+      enum:
+        - Draft
+        - Registered
+        - Disposed
+    AssetStatusQueryParam:
+      type: string
+      description: "See Asset Status Codes."
+      example: "DRAFT"
+      enum:
+        - DRAFT
+        - REGISTERED
+        - DISPOSED
     AssetType:
       type: object
       required:
-        - assetTypeId
         - assetTypeName
         - bookDepreciationSetting
       properties:
@@ -742,7 +824,8 @@ components:
           description: "The method of averaging applied to this asset. See Averaging Methods"
         depreciationRate:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.05
           description: "The rate of depreciation (e.g. 0.05)"
         effectiveLifeYears:
@@ -777,12 +860,14 @@ components:
       properties:
         currentCapitalGain:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 5.25
           description: "When an asset is disposed, this will be the sell price minus the purchase price if a profit was made."
         currentGainLoss:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.50
           description: "When an asset is disposed, this will be the lowest one of sell price or purchase price, minus the current book value."
         depreciationStartDate:
@@ -792,22 +877,26 @@ components:
           description: "YYYY-MM-DD"
         costLimit:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 9000.0000
           description: "The value of the asset you want to depreciate, if this is less than the cost of the asset."
         residualValue:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10000.0000
           description: "The value of the asset remaining when you've fully depreciated it."
         priorAccumDepreciationAmount:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.45
           description: "All depreciation prior to the current financial year."
         currentAccumDepreciationAmount:
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 5.0000
           description: "All depreciation occurring in the current financial year."
     Setting:
@@ -851,4 +940,71 @@ components:
           type: boolean
           description: "opt in for tax calculation"
           example: false
+      type: object
+    Error:
+      externalDocs:
+        url: "https://developer.xero.com/documentation/api/http-response-codes"
+      properties:
+        resourceValidationErrors:
+          description: Array of elements of resource validation errors
+          type: array
+          items:
+            $ref: "#/components/schemas/ResourceValidationErrorsElement"
+        fieldValidationErrors:
+          description: Array of elements of field validation errors
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldValidationErrorsElement"
+        type:
+          description: The internal type of error, not accessible externally
+          type: string
+        title:
+          description: Title of the error
+          type: string
+        detail:
+          description: Detail of the error
+          type: string
+      type: object
+    ResourceValidationErrorsElement:
+      externalDocs:
+        url: "https://developer.xero.com/documentation/api/http-response-codes"
+      properties:
+        resourceName:
+          description: The field name of the erroneous field
+          type: string
+        localisedMessage:
+          description: Explanation of the resource validation error
+          type: string
+        type:
+          description: Internal type of the resource error message
+          type: string
+        title:
+          description: Title of the resource validation error
+          type: string
+        detail:
+          description: Detail of the resource validation error
+          type: string
+      type: object
+    FieldValidationErrorsElement:
+      externalDocs:
+        url: "https://developer.xero.com/documentation/api/http-response-codes"
+      properties:
+        fieldName:
+          description: The field name of the erroneous field
+          type: string
+        valueProvided:
+          description: The provided value
+          type: string
+        localisedMessage:
+          description: Explanation of the field validation error
+          type: string
+        type:
+          description: Internal type of the field validation error message
+          type: string
+        title:
+          description: Title of the field validation error
+          type: string
+        detail:
+          description: Detail of the field validation error
+          type: string
       type: object

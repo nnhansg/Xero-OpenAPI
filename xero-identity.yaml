@@ -1,17 +1,21 @@
 openapi: 3.0.0
-servers:
-  - url: 'https://api.xero.com'
 info:
-  version: "1.0.0"
-  title: Xero oAuth 2 identity service
-  description: This specifing endpoints related to managing authentication tokens and identity for Xero API
+  version: "2.13.4"
+  title: Xero OAuth 2 Identity Service API
+  description: These endpoints are related to managing authentication tokens and identity for Xero API
   termsOfService: "https://developer.xero.com/xero-developer-platform-terms-conditions/"
   contact:
     name: "Xero Platform Team"
     email: "api@xero.com"
     url: "https://developer.xero.com"
+  license:
+    name: MIT 
+    url: 'https://github.com/XeroAPI/Xero-OpenAPI/blob/master/LICENSE'
+servers:
+  - description: Xero Identity service API
+    url: 'https://api.xero.com'
 paths:
-  /connections:
+  /Connections:
     get:
       security:
         - OAuth2: []
@@ -19,7 +23,16 @@ paths:
         - identity
       description: Override the base server url that include version
       operationId: getConnections
-      summary: Allows you to retrieve the connections for this user
+      summary: Retrieves the connections for this user
+      parameters:
+        - in: query
+          required: false
+          name: authEventId
+          description: Filter by authEventId
+          example: "00000000-0000-0000-0000-000000000000"
+          schema:
+            type: string
+            format: uuid
       x-basepath: 'https://api.xero.com'
       responses:
         '200':
@@ -34,12 +47,13 @@ paths:
                           {
                             "id": "7cb59f93-2964-421d-bb5e-a0f7a4572a44",
                             "tenantId": "fe79f7dd-b6d4-4a92-ba7b-538af6289c58",
+                            "tenantName": "Demo Company (NZ)",
                             "tenantType": "ORGANISATION",
                             "createdDateUtc": "2019-12-07T18:46:19.5165400",
                             "updatedDateUtc": "2019-12-07T18:46:19.5187840"
                           }
                         ]'
-  '/connections/{id}':
+  '/Connections/{id}':
     delete:
       security:
         - OAuth2: []
@@ -47,7 +61,7 @@ paths:
         - identity
       description: Override the base server url that include version
       operationId: deleteConnection
-      summary: Allows you to delete a connection for this user (i.e. disconnect a tenant)
+      summary: Deletes a connection for this user (i.e. disconnect a tenant)
       x-basepath: 'https://api.xero.com'
       parameters:
         - required: true
@@ -76,18 +90,27 @@ components:
           description: Xero identifier of organisation
           type: string
           format: uuid
+        authEventId:
+          description: Identifier shared across connections authorised at the same time
+          type: string
+          format: uuid
         tenantType:
           description: Xero tenant type (i.e. ORGANISATION, PRACTICE)
           type: string
-        createdDateUTC:
+        tenantName:
+          description: Xero tenant name
+          type: string
+        createdDateUtc:
           description: The date when the user connected this tenant to your app
           type: string
-          x-java-format: "LocalDateTime" 
+          format: date-time
+          x-is-datetime: true
           x-php-format: '\DateTime'
         updatedDateUtc:
           description: The date when the user most recently connected this tenant to your app. May differ to the created date if the user has disconnected and subsequently reconnected this tenant to your app.
           type: string
-          x-java-format: "LocalDateTime"
+          format: date-time
+          x-is-datetime: true
           x-php-format: '\DateTime'
     RefreshToken:
       externalDocs:
@@ -118,9 +141,9 @@ components:
           description: access token provided during authentication flow
           type: string
         expires_in:
-          description: time in milliseconds until access token expires.
-          type: number
-          format: int
+          description: time in seconds until access token expires.
+          type: integer
+          format: int64
         token_type:
           description: type of token i.e. Bearer
           type: string
@@ -128,6 +151,9 @@ components:
           description: token used to refresh an expired access token
           type: string
   securitySchemes:
+    BasicAuth:    
+      type: http
+      scheme: basic
     OAuth2:
       type: oauth2
       description: For more information

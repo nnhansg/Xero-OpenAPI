@@ -1,18 +1,21 @@
 openapi: 3.0.0
-servers:
-  - description: Xero Payroll AU API
-    url: https://api.xero.com/payroll.xro/1.0/
 info:
-  version: '1.0.0'
-  title: 'Xero Payroll AU'
+  version: '2.13.4'
+  title: 'Xero Payroll AU API'
   description: 'This is the Xero Payroll API for orgs in Australia region.'
   termsOfService: "https://developer.xero.com/xero-developer-platform-terms-conditions/"
   contact:
     name: "Xero Platform Team"
     email: "api@xero.com"
     url: "https://developer.xero.com"
+  license:
+    name: MIT 
+    url: 'https://github.com/XeroAPI/Xero-OpenAPI/blob/master/LICENSE'
+servers:
+  - description: Xero Payroll AU API
+    url: https://api.xero.com/payroll.xro/1.0
 tags:
-  - name: PayrollAU
+  - name: PayrollAu
     description: Operations available to regular developers
 paths:
   /Employees:
@@ -22,9 +25,9 @@ paths:
       security:
         - OAuth2: [payroll.employees.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getEmployees
-      summary: searches employees
+      summary: Searches payroll employees
       parameters:
         - in: header
           name: If-Modified-Since
@@ -56,9 +59,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Employees'
               example: '{
-                          "Id": "b22392ec-a288-4258-ba55-87921d0ed63f",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573621523465)/",
                           "Employees": [
                             {
@@ -102,9 +105,93 @@ paths:
       security:
         - OAuth2: [payroll.employees]
       tags:
-        - PayrollAU
-      summary: Use this method to create a payroll employee
+        - PayrollAu
+      summary: Creates a payroll employee
       operationId: createEmployee
+      x-hasPayrollAuProblem: true
+      x-example:
+        - dateOfBirthValue:
+          key: dateOfBirth
+          keyPascal: DateOfBirth
+          keySnake: date_of_birth
+          is_date: true
+          object: employee
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2000, Month.OCTOBER, 28)"
+          java: "LocalDate.of(2000, Month.OCTOBER, 28)"
+          csharp: "new DateTime(2000, 10, 10)"
+          php: "new DateTime('2000-10-28')"
+          node: "'2000-10-28'"
+          python: "dateutil.parser.parse('2000-10-28T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - homeAddress:
+          key: homeAddress
+          keyPascal: HomeAddress
+          keySnake: home_address
+          is_object: true 
+        - addressLine1:
+          key: addressLine1
+          keyPascal: AddressLine1
+          keySnake: address_line_1
+          default: 123 Test st
+          object: homeAddress
+        - region:
+          key: region
+          keyPascal: Region
+          keySnake: region
+          object: homeAddress
+          default: VIC
+        - postalCode:
+          nonString: true
+          key: postalCode
+          keyPascal: PostalCode
+          keySnake: postal_code
+          object: homeAddress
+          default: 3000
+        - city:
+          key: city
+          keyPascal: City
+          keySnake: city
+          default: Melbourne
+          object: homeAddress
+          is_last: true
+        - employee:
+          key: employee
+          keyPascal: Employee
+          is_object: true 
+        - firstName:
+          key: firstName
+          keyPascal: FirstName
+          keySnake: first_name 
+          default: "Adam"
+          object: employee
+        - lastName:
+          key: lastName
+          keyPascal: LastName
+          keySnake: last_name
+          default: "Adamson"
+          object: employee
+        - dateOfBirth:
+          is_variable: true
+          nonString: true
+          key: dateOfBirth
+          keyPascal: DateOfBirth
+          keySnake: date_of_birth
+          default: dateOfBirth
+          python: date_of_birth
+          ruby: date_of_birth
+          object: employee
+        - setHomeAddress:
+          is_last: true
+          is_variable: true
+          nonString: true
+          key: homeAddress
+          keyPascal: HomeAddress
+          default: homeAddress
+          python: home_address
+          ruby: home_address
+          object: employee      
       responses:
         '200':
           description: A successful request
@@ -113,9 +200,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Employees'
               example: '{
-                        "Id": "e40caf91-1931-40c0-8908-728aa092ab23",
+                        "Id": "00000000-0000-0000-0000-000000000000",
                         "Status": "OK",
-                        "ProviderName": "java-sdk-oauth2-dev-02",
+                        "ProviderName": "provider-name",
                         "DateTimeUTC": "/Date(1573621524489)/",
                         "Employees": [
                           {
@@ -182,18 +269,18 @@ paths:
                           "Status": "ACTIVE"
                         }
                       ]'
-  /Employees/{EmployeeId}:
+  /Employees/{EmployeeID}:
     parameters:
       - $ref: '#/components/parameters/requiredHeader'
     get:
       security:
         - OAuth2: [payroll.employees.read]
       tags:
-        - PayrollAU
-      summary: searches for an employee by unique id
+        - PayrollAu
+      summary: Retrieves an employee's detail by unique employee id
       operationId: getEmployee
       parameters: 
-        - name: EmployeeId
+        - name: EmployeeID
           in: path
           required: true
           description: Employee id for single object
@@ -209,9 +296,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Employees'
               example: '{
-                          "Id": "ff00117e-75d1-4cc3-961c-13fc37b65e01",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573623316150)/",
                           "Employees": [
                             {
@@ -322,12 +409,95 @@ paths:
       security:
         - OAuth2: [payroll.employees]
       tags:
-        - PayrollAU
-      summary: Update an Employee 
+        - PayrollAu
+      summary: Updates an employee's detail 
       operationId: updateEmployee
       description:  Update properties on a single employee
+      x-example:
+        - dateOfBirthValue:
+          key: dateOfBirth
+          keyPascal: DateOfBirth
+          keySnake: date_of_birth
+          is_date: true
+          object: employee
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2000, Month.OCTOBER, 28)"
+          java: "LocalDate.of(2000, Month.OCTOBER, 28)"
+          csharp: "new DateTime(2000, 10, 10)"
+          php: "new DateTime('2000-10-28')"
+          node: "'2000-10-28'"
+          python: "dateutil.parser.parse('2000-10-28T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - homeAddress:
+          key: homeAddress
+          keyPascal: HomeAddress
+          keySnake: home_address
+          is_object: true 
+        - addressLine1:
+          key: addressLine1
+          keyPascal: AddressLine1
+          keySnake: address_line_1
+          default: 123 Test st
+          object: homeAddress
+        - region:
+          key: region
+          keyPascal: Region
+          keySnake: region
+          object: homeAddress
+          default: VIC
+        - postalCode:
+          nonString: true
+          key: postalCode
+          keyPascal: PostalCode
+          keySnake: postal_code
+          object: homeAddress
+          default: 3000
+        - city:
+          key: city
+          keyPascal: City
+          keySnake: city
+          default: Melbourne
+          object: homeAddress
+          is_last: true
+        - employee:
+          key: employee
+          keyPascal: Employee
+          is_object: true 
+        - firstName:
+          key: firstName
+          keyPascal: FirstName
+          keySnake: first_name 
+          default: "Adam"
+          object: employee
+        - lastName:
+          key: lastName
+          keyPascal: LastName
+          keySnake: last_name
+          default: "Adamson"
+          object: employee
+        - dateOfBirth:
+          is_variable: true
+          nonString: true
+          key: dateOfBirth
+          keyPascal: DateOfBirth
+          keySnake: date_of_birth
+          default: dateOfBirth
+          python: date_of_birth
+          ruby: date_of_birth
+          object: employee
+        - setHomeAddress:
+          is_last: true
+          is_variable: true
+          nonString: true
+          key: homeAddress
+          keyPascal: HomeAddress
+          default: homeAddress
+          python: home_address
+          ruby: home_address
+          object: employee
       parameters: 
-        - name: EmployeeId
+        - name: EmployeeID
           in: path
           required: true
           description: Employee id for single object
@@ -343,7 +513,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Employees'
               example: '{
-                          "Id": "a40b0b60-def8-4bd7-bcd6-d97d617bf539",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
                           "ProviderName": "3f93110a-df13-49c7-b82f-a069813df188",
                           "DateTimeUTC": "/Date(1573621524786)/",
@@ -395,9 +565,9 @@ paths:
       security:
         - OAuth2: [payroll.leaveapplications.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getLeaveApplications
-      summary: searches Leave Applications
+      summary:  Retrieves leave applications
       parameters:
         - in: header
           name: If-Modified-Since
@@ -429,9 +599,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaveApplications'
               example: '{
-                          "Id": "5d31168a-5024-401d-9531-6902064b3fcb",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573679791199)/",
                           "LeaveApplications": [
                             {
@@ -510,9 +680,84 @@ paths:
       security:
         - OAuth2: [payroll.leaveapplications]
       tags:
-        - PayrollAU
-      summary: Use this method to create a Leave Application
+        - PayrollAu
+      summary: Creates a leave application
       operationId: createLeaveApplication
+      x-hasPayrollAuProblem: true
+      x-example:
+        - startDateValue:
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 28)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 28)"
+          csharp: "new DateTime(2020, 10, 10)"
+          php: "new DateTime('2020-10-28')"
+          node: "'2020-10-28'"
+          python: "dateutil.parser.parse('2020-10-28T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - endDateValue:
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          csharp: "new DateTime(2020, 10, 12)"
+          php: "new DateTime('2020-10-30')"
+          node: "'2020-10-30'"
+          python: "dateutil.parser.parse('2020-10-30T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - leaveApplication: 
+          key: leaveApplication
+          keyPascal: LeaveApplication
+          is_object: true 
+        - employeeId:
+          is_uuid: true 
+          key: employeeId
+          keyPascal: EmployeeId
+          keySnake: employee_id
+          object: leaveApplication
+          default: 00000000-0000-0000-0000-000000000000
+        - leaveTypeId:
+          is_uuid: true 
+          key: leaveTypeId
+          keyPascal: LeaveTypeId
+          keySnake: leave_type_id
+          object: leaveApplication
+          default: 00000000-0000-0000-0000-000000000000
+        - title:
+          key: title
+          keyPascal: Title
+          keySnake: title
+          default: Annual Leave
+          object: leaveApplication
+        - startDate:
+          is_variable: true
+          nonString: true
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          default: startDate
+          python: start_date
+          ruby: start_date
+          object: leaveApplication
+        - endDate:
+          is_last: true 
+          is_variable: true
+          nonString: true
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          default: endDate
+          python: end_date
+          ruby: end_date
+          object: leaveApplication
       responses:
         '200':
           description: A successful request
@@ -521,9 +766,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaveApplications'
               example: '{
-                          "Id": "7bbc3541-befd-482e-a6a3-a8cf7a93461e",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573679791917)/",
                           "LeaveApplications": [
                             {
@@ -564,18 +809,18 @@ paths:
                           "EndDate": "/Date(1572645600000+0000)/"
                         }
                       ]'
-  /LeaveApplications/{LeaveApplicationId}:
+  /LeaveApplications/{LeaveApplicationID}:
     parameters:
       - $ref: '#/components/parameters/requiredHeader'
     get:
       security:
         - OAuth2: [payroll.leaveapplications.read]
       tags:
-        - PayrollAU
-      summary: searches for an Leave Application by unique id
+        - PayrollAu
+      summary: Retrieves a leave application by a unique leave application id
       operationId: getLeaveApplication
       parameters: 
-        - name: LeaveApplicationId
+        - name: LeaveApplicationID
           in: path
           required: true
           description: Leave Application id for single object
@@ -591,9 +836,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaveApplications'
               example: '{
-                          "Id": "071dafb9-0d50-48b2-8ee4-b48d3f3c119d",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573679791457)/",
                           "LeaveApplications": [
                             {
@@ -619,11 +864,85 @@ paths:
       security:
         - OAuth2: [payroll.leaveapplications]
       tags:
-        - PayrollAU
-      summary: Use this method to update a Leave Application
+        - PayrollAu
+      summary: Updates a specific leave application
       operationId: updateLeaveApplication
+      x-example:
+        - startDateValue:
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 28)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 28)"
+          csharp: "new DateTime(2020, 10, 10)"
+          php: "new DateTime('2020-10-28')"
+          node: "'2020-10-28'"
+          python: "dateutil.parser.parse('2020-10-28T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - endDateValue:
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          csharp: "new DateTime(2020, 10, 12)"
+          php: "new DateTime('2020-10-30')"
+          node: "'2020-10-30'"
+          python: "dateutil.parser.parse('2020-10-30T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - leaveApplication: 
+          key: leaveApplication
+          keyPascal: LeaveApplication
+          is_object: true 
+        - employeeId:
+          is_uuid: true 
+          key: employeeId
+          keyPascal: EmployeeId
+          keySnake: employee_id
+          object: leaveApplication
+          default: 00000000-0000-0000-0000-000000000000
+        - leaveTypeId:
+          is_uuid: true 
+          key: leaveTypeId
+          keyPascal: LeaveTypeId
+          keySnake: leave_type_id
+          object: leaveApplication
+          default: 00000000-0000-0000-0000-000000000000
+        - title:
+          key: title
+          keyPascal: Title
+          keySnake: title
+          default: Annual Leave
+          object: leaveApplication
+        - startDate:
+          is_variable: true
+          nonString: true
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          default: startDate
+          python: start_date
+          ruby: start_date
+          object: leaveApplication
+        - endDate:
+          is_last: true 
+          is_variable: true
+          nonString: true
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          default: endDate
+          python: end_date
+          ruby: end_date
+          object: leaveApplication
       parameters: 
-        - name: LeaveApplicationId
+        - name: LeaveApplicationID
           in: path
           required: true
           description: Leave Application id for single object
@@ -639,7 +958,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaveApplications'
               example: '{
-                        "Id": "9ebc7d7a-e188-4b31-bb2c-1ab9421b82c4",
+                        "Id": "00000000-0000-0000-0000-000000000000",
                         "Status": "OK",
                         "ProviderName": "3f93110a-df13-49c7-b82f-a069813df188",
                         "DateTimeUTC": "/Date(1573679792293)/",
@@ -690,9 +1009,9 @@ paths:
       security:
         - OAuth2: [payroll.payitems.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getPayItems
-      summary: searches Pay Items
+      summary: Retrieves pay items
       parameters:
         - in: header
           name: If-Modified-Since
@@ -724,9 +1043,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayItems'
               example: '{
-                          "Id": "add39c3e-f397-45fb-aa4f-af1095ec7f65",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573620869531)/",
                           "PayItems": {
                             "EarningsRates": [
@@ -830,7 +1149,7 @@ paths:
                                 "Name": "Annual Leave",
                                 "TypeOfUnits": "Hours",
                                 "NormalEntitlement": 152,
-                                "LeaveLoadingRate": 1,
+                                "LeaveLoadingRate": 1.0,
                                 "IsPaidLeave": true,
                                 "ShowOnPayslip": true,
                                 "UpdatedDateUTC": "/Date(1573620853000+0000)/",
@@ -867,9 +1186,244 @@ paths:
       security:
         - OAuth2: [payroll.payitems]
       tags:
-        - PayrollAU
-      summary: Use this method to create a Pay Item
+        - PayrollAu
+      summary: Creates a pay item
       operationId: createPayItem
+      x-example:
+        - earningsRate:
+          key: earningsRate
+          keyPascal: EarningsRate
+          keySnake: earnings_rate
+          is_object: true 
+        - earningsName:
+          key: name
+          keyPascal: Name
+          keySnake: name
+          object: earningsRate
+          default: Ordinary Hours 123
+        - earningsAccountCode:
+          key: accountCode
+          keyPascal: AccountCode
+          keySnake: account_code
+          object: earningsRate
+          default: 477
+        - earningsTypeOfUnits:
+          key: typeOfUnits
+          keyPascal: TypeOfUnits
+          keySnake: type_of_units
+          object: earningsRate
+          default: Hours
+        - isExemptFromTax:
+          key: isExemptFromTax
+          keyPascal: IsExemptFromTax
+          keySnake: is_exempt_from_tax
+          object: earningsRate
+          default: true
+          nonString: true        
+        - isExemptFromSuper:
+          key: isExemptFromSuper
+          keyPascal: IsExemptFromSuper
+          keySnake: is_exempt_from_super
+          object: earningsRate
+          default: true
+          nonString: true
+        - earningsType:
+          key: earningsType
+          nonString: true
+          keyPascal: EarningsType
+          default: OVERTIMEEARNINGS
+          php: XeroAPI\XeroPHP\Models\PayrollAu\EarningsType::OVERTIMEEARNINGS
+          node: EarningsType.OVERTIMEEARNINGS
+          ruby: XeroRuby::PayrollAu::EarningsType::OVERTIMEEARNINGS
+          python_string: OVERTIMEEARNINGS
+          java: com.xero.models.payrollau.EarningsType.OVERTIMEEARNINGS
+          csharp: EarningsType.OVERTIMEEARNINGS
+          object: earningsRate
+          is_last: true
+        - deductionType:
+          key: deductionType
+          keyPascal: DeductionType
+          keySnake: deduction_type
+          is_object: true 
+        - deductionTypeName:
+          key: name
+          keyPascal: Name
+          keySnake: name
+          default: Union Fees
+          object: deductionType
+        - deductionAccountCode:
+          key: accountCode
+          keyPascal: AccountCode
+          keySnake: account_code
+          object: deductionType
+          default: 826
+        - reducesTax:
+          key: reducesTax
+          keyPascal: ReducesTax
+          keySnake: reduces_tax
+          object: deductionType
+          default: true
+          nonString: true
+        - reducesSuper:
+          key: reducesSuper
+          keyPascal: ReducesSuper
+          keySnake: reduces_super
+          object: deductionType
+          default: true
+          nonString: true
+          is_last: true 
+        - leaveType:
+          key: leaveType
+          keyPascal: LeaveType
+          keySnake: leave_type
+          is_object: true 
+        - leaveTypeName:
+          key: name
+          keyPascal: Name
+          keySnake: name
+          default: Annual Leave
+          object: leaveType
+        - leaveTypeOfUnits:
+          key: typeOfUnits
+          keyPascal: TypeOfUnits
+          keySnake: type_of_units
+          object: leaveType
+          default: Hours
+        - isPaidLeave:
+          key: isPaidLeave
+          keyPascal: IsPaidLeave
+          keySnake: is_paid_leave
+          object: leaveType
+          default: true
+          nonString: true
+        - showOnPayslip:
+          key: showOnPayslip
+          keyPascal: ShowOnPayslip
+          keySnake: show_on_payslip
+          object: leaveType
+          default: true
+          is_last: true 
+          nonString: true
+        - reimbursementType:
+          key: reimbursementType
+          keyPascal: ReimbursementType
+          keySnake: reimbursement_type
+          is_object: true 
+        - reimbursementTypeName:
+          key: name
+          keyPascal: Name
+          keySnake: name
+          default: Annual Leave
+          object: reimbursementType
+        - reimbursementTypeAccountCode:
+          key: accountCode
+          keyPascal: AccountCode
+          keySnake: account_code
+          object: reimbursementType
+          is_last: true 
+          default: 850            
+        - earningsRates:
+          is_list: true 
+          key: earningsRates
+          keyPascal: EarningsRates
+          keySnake: earnings_rates
+          csharp: EarningsRate
+          java: EarningsRate
+        - addEarningsRates:
+          is_list_add: true 
+          key: earningsRates
+          keyPascal: EarningsRates
+          keySnake: earnings_rates
+          java: EarningsRates
+          python: earnings_rate
+          ruby: earnings_rate
+          csharp: EarningsRate
+          object: earningsRate 
+        - deductionTypes:
+          is_list: true
+          key: deductionTypes
+          keyPascal: DeductionTypes
+          keySnake: deduction_types
+          csharp: DeductionType
+          java: DeductionType
+        - leaveTypes:
+          is_list: true 
+          key: leaveTypes
+          keyPascal: LeaveTypes
+          keySnake: leave_types
+          csharp: LeaveType
+          java: LeaveType
+        - addLeaveTypes:
+          is_last: true
+          is_list_add: true 
+          key: leaveTypes
+          keyPascal: LeaveTypes
+          keySnake: leave_types
+          java: LeaveTypes
+          python: leave_type
+          ruby: leave_type
+          csharp: LeaveType
+          object: leaveType 
+        - reimbursementTypes:
+          is_list: true 
+          key: reimbursementTypes
+          keyPascal: ReimbursementTypes
+          keySnake: reimbursement_types
+          csharp: ReimbursementType
+          java: ReimbursementType
+        - addReimbursementTypes:
+          is_last: true 
+          is_list_add: true 
+          key: reimbursementTypes
+          keyPascal: ReimbursementTypes
+          keySnake: reimbursement_types
+          java: ReimbursementTypes
+          python: reimbursement_type
+          ruby: reimbursement_type
+          csharp: ReimbursementType
+          object: reimbursementType        
+        - payItem:
+          key: payItem
+          keyPascal: PayItem
+          keySnake: pay_item
+          is_object: true  
+        - setEarningsRates:
+          is_variable: true
+          nonString: true
+          key: earningsRates
+          keyPascal: EarningsRates
+          default: earningsRates
+          python: earnings_rates
+          ruby: earnings_rates
+          object: payItem  
+        - setDeductionTypes:
+          is_variable: true
+          nonString: true
+          key: deductionTypes
+          keyPascal: DeductionTypes
+          default: deductionTypes
+          python: deduction_types
+          ruby: deduction_types
+          object: payItem  
+        - setLeaveTypes:
+          is_variable: true
+          nonString: true
+          key: leaveTypes
+          keyPascal: LeaveTypes
+          default: leaveTypes
+          python: leave_types
+          ruby: leave_types
+          object: payItem  
+        - setReimbursementTypes:
+          is_variable: true
+          nonString: true
+          key: reimbursementTypes
+          keyPascal: ReimbursementTypes
+          default: reimbursementTypes
+          python: reimbursement_types 
+          ruby: reimbursement_types
+          object: payItem
+          is_last: true
       responses:
         '200':
           description: A successful request - currently returns empty array for JSON 
@@ -877,6 +1431,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PayItems'
+              example: '{
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
+                          "DateTimeUTC": "/Date(1593448963288)/",
+                          "PayItems": {
+                            "EarningsRates": [
+                              {
+                                "EarningsRateID": "1fa4e226-b711-46ba-a8a7-4344c9c5fb87",
+                                "Name": "MyRate",
+                                "EarningsType": "ORDINARYTIMEEARNINGS",
+                                "RateType": "MULTIPLE",
+                                "AccountCode": "400",
+                                "Multiplier": 1.5,
+                                "IsExemptFromTax": true,
+                                "IsExemptFromSuper": true,
+                                "AccrueLeave": false,
+                                "IsReportableAsW1": false,
+                                "UpdatedDateUTC": "/Date(1593448963210+0000)/",
+                                "CurrentRecord": true
+                              },
+                              {
+                                "EarningsRateID": "c6905c26-0716-4746-9098-608545e04dd2",
+                                "Name": "Redundancy",
+                                "EarningsType": "LUMPSUMD",
+                                "RateType": "FIXEDAMOUNT",
+                                "AccountCode": "477",
+                                "IsExemptFromTax": true,
+                                "IsExemptFromSuper": true,
+                                "IsReportableAsW1": true,
+                                "UpdatedDateUTC": "/Date(1476729649000+0000)/",
+                                "CurrentRecord": true
+                              },
+                              {
+                                "EarningsRateID": "33820094-656e-4db3-b04b-8bd3e2db0a9b",
+                                "Name": "ETP Leave Earning",
+                                "EarningsType": "EMPLOYMENTTERMINATIONPAYMENT",
+                                "RateType": "RATEPERUNIT",
+                                "AccountCode": "477",
+                                "TypeOfUnits": "Hours",
+                                "IsExemptFromTax": false,
+                                "IsExemptFromSuper": true,
+                                "IsReportableAsW1": true,
+                                "UpdatedDateUTC": "/Date(1520900705000+0000)/",
+                                "EmploymentTerminationPaymentType": "O",
+                                "CurrentRecord": true
+                              }
+                            ]
+                          }
+                        }'
         '400':
           description: invalid input, object invalid - TODO
       requestBody:
@@ -884,37 +1488,26 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/PayItem'
-            example: '[
-                        {
-                          "EarningsRates": [
-                            {
-                              "Name": "MyRate",
-                              "AccountCode": "400",
-                              "TypeOfUnits": "4.00",
-                              "IsExemptFromTax": true,
-                              "IsExemptFromSuper": true,
-                              "IsReportableAsW1": false,
-                              "EarningsType": "FIXED",
-                              "EarningsRateID": "ab874dfb-ab09-4c91-954e-43acf6fc23b4",
-                              "RateType": "FIXEDAMOUNT",
-                              "RatePerUnit": "10.0",
-                              "Multiplier": 1.5,
-                              "AccrueLeave": 1,
-                              "Amount": 5,
-                              "EmploymentTerminationPaymentType": "O"
-                            }
-                          ],
-                          "DeductionTypes": [
-                            {
-                              "Name": "My Deduction",
-                              "AccountCode": "400"
-                            }
-                          ]
-                        }
-                      ]'
+              $ref: '#/components/schemas/PayItem'
+            example: '{
+                        "EarningsRates": [
+                          {
+                            "Name": "MyRate",
+                            "AccountCode": "400",
+                            "TypeOfUnits": "4.00",
+                            "IsExemptFromTax": true,
+                            "IsExemptFromSuper": true,
+                            "IsReportableAsW1": false,
+                            "EarningsType": "ORDINARYTIMEEARNINGS",
+                            "EarningsRateID": "1fa4e226-b711-46ba-a8a7-4344c9c5fb87",
+                            "RateType": "MULTIPLE",
+                            "RatePerUnit": "10.0",
+                            "Multiplier": 1.5,
+                            "Amount": 5,
+                            "EmploymentTerminationPaymentType": "O"
+                          }
+                        ]
+                      }'
   /PayrollCalendars:
     parameters:
       - $ref: '#/components/parameters/requiredHeader'
@@ -922,9 +1515,9 @@ paths:
       security:
         - OAuth2: [payroll.payrollcalendars.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getPayrollCalendars
-      summary: searches Payroll Calendars
+      summary: Retrieves payroll calendars
       parameters:
         - in: header
           name: If-Modified-Since
@@ -956,9 +1549,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayrollCalendars'
               example: '{ 
-                          "Id":"a89fb36b-c573-42d8-88db-a947cbd6af5a",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573611063408)\/",
                           "PayrollCalendars":[ 
                               { 
@@ -967,7 +1560,8 @@ paths:
                                 "CalendarType":"WEEKLY",
                                 "StartDate":"\/Date(1573171200000+0000)\/",
                                 "PaymentDate":"\/Date(1573776000000+0000)\/",
-                                "UpdatedDateUTC":"\/Date(1573077687000+0000)\/"
+                                "UpdatedDateUTC":"\/Date(1573077687000+0000)\/",
+                                "ReferenceDate":"\/Date(1573171200000+0000)\/"
                               },
                               { 
                                 "PayrollCalendarID":"22a05fc5-386d-4950-9842-3e7a6c812135",
@@ -975,7 +1569,8 @@ paths:
                                 "CalendarType":"WEEKLY",
                                 "StartDate":"\/Date(1546560000000+0000)\/",
                                 "PaymentDate":"\/Date(1547164800000+0000)\/",
-                                "UpdatedDateUTC":"\/Date(1572916157000+0000)\/"
+                                "UpdatedDateUTC":"\/Date(1572916157000+0000)\/",
+                                "ReferenceDate":"\/Date(1573171200000+0000)\/"
                               }
                           ]
                         }'
@@ -989,9 +1584,102 @@ paths:
       security:
         - OAuth2: [payroll.payrollcalendars]
       tags:
-        - PayrollAU
-      summary: Use this method to create a Payroll Calendars
+        - PayrollAu
+      summary: Creates a Payroll Calendar
       operationId: createPayrollCalendar
+      x-hasPayrollAuProblem: true
+      x-example:
+        - startDateValue:
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 28)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 28)"
+          csharp: "new DateTime(2020, 10, 10)"
+          php: "new DateTime('2020-10-28')"
+          node: "'2000-10-28'"
+          python: "dateutil.parser.parse('2020-10-28T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - paymentDateValue:
+          key: paymentDate
+          keyPascal: PaymentDate
+          keySnake: payment_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          csharp: "new DateTime(2020, 10, 30)"
+          php: "new DateTime('2020-10-30')"
+          node: "'2000-10-30'"
+          python: "dateutil.parser.parse('2000-10-30T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - payrollCalendar:
+          is_object: true 
+          key: payrollCalendar
+          keyPascal: PayrollCalendar
+          keySnake: payroll_calendar
+        - name:
+          key: name
+          keyPascal: Name
+          keySnake: name
+          default: Weekly
+          object: payrollCalendar
+        - calendarType:
+          nonString: true 
+          key: calendarType
+          keyPascal: CalendarType
+          keySnake: calendar_type
+          default: WEEKLY
+          php: XeroAPI\XeroPHP\Models\PayrollAu\CalendarType::WEEKLY
+          node: CalendarType.WEEKLY
+          ruby: XeroRuby::PayrollAu::CalendarType::WEEKLY
+          python_string: WEEKLY
+          java: com.xero.models.payrollau.CalendarType.WEEKLY
+          csharp: CalendarType.WEEKLY
+          object: payrollCalendar
+        - setStartDate:
+          is_variable: true
+          nonString: true
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          default: startDate
+          python: start_date
+          ruby: start_date
+          object: payrollCalendar
+        - setPaymentDate:
+          is_last: true 
+          is_variable: true
+          nonString: true
+          key: paymentDate
+          keyPascal: PaymentDate
+          keySnake: payment_date
+          default: paymentDate
+          python: payment_date
+          ruby: payment_date
+          object: payrollCalendar 
+        - payrollCalendars:
+          is_list: true 
+          key: payrollCalendars
+          keyPascal: PayrollCalendars
+          keySnake: payroll_calendars
+          csharp: PayrollCalendar
+          java: PayrollCalendar
+        - addPayrollCalendars:
+          is_last: true 
+          is_list_add: true 
+          key: payrollCalendars
+          keyPascal: PayrollCalendars
+          keySnake: payroll_calendars
+          java: PayrollCalendars
+          python: payroll_calendar
+          ruby: payroll_calendar
+          csharp: PayrollCalendar
+          object: payrollCalendar  
       responses:
         '200':
           description: A successful request
@@ -999,20 +1687,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PayrollCalendars'
-              example: '{ 
-                          "Id":"b82449fa-ce79-4b4f-8324-7a2e08e80b66",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
-                          "DateTimeUTC":"\/Date(1573611063755)\/",
-                          "PayRuns":[ 
-                              { 
-                                "PayRunID":"31a11153-642b-4c65-b110-9b92b3cd79e1",
-                                "PayrollCalendarID":"78bb86b9-e1ea-47ac-b75d-f087a81931de",
-                                "PayRunPeriodStartDate":"\/Date(1572566400000+0000)\/",
-                                "PayRunPeriodEndDate":"\/Date(1573084800000+0000)\/",
-                                "PaymentDate":"\/Date(1573171200000+0000)\/",
-                                "PayRunStatus":"DRAFT",
-                                "UpdatedDateUTC":"\/Date(1573611063724+0000)\/"
+              example: '{
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
+                          "DateTimeUTC":"\/Date(1584125518649)\/",
+                          "PayrollCalendars":[
+                              {
+                                "PayrollCalendarID":"57accbfe-f729-4be3-b3cb-8c3445c61d3a",
+                                "Name":"MyCal37127",
+                                "CalendarType":"WEEKLY",
+                                "StartDate":"\/Date(1572998400000+0000)\/",
+                                "PaymentDate":"\/Date(1573516800000+0000)\/",
+                                "UpdatedDateUTC":"\/Date(1584125518633+0000)\/"
                               }
                           ]
                         }'
@@ -1042,9 +1729,9 @@ paths:
       security:
         - OAuth2: [payroll.payrollcalendars.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getPayrollCalendar
-      summary: searches Payroll Calendars
+      summary: Retrieves payroll calendar by using a unique payroll calendar ID
       parameters:
         - name: PayrollCalendarID
           in: path
@@ -1062,9 +1749,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayrollCalendars'
               example: '{ 
-                          "Id":"8283e501-2a7f-4080-b3c9-579a51b55b94",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573611453008)\/",
                           "PayrollCalendars":[ 
                               { 
@@ -1073,7 +1760,8 @@ paths:
                                 "CalendarType":"WEEKLY",
                                 "StartDate":"\/Date(1573171200000+0000)\/",
                                 "PaymentDate":"\/Date(1573776000000+0000)\/",
-                                "UpdatedDateUTC":"\/Date(1573077687000+0000)\/"
+                                "UpdatedDateUTC":"\/Date(1573077687000+0000)\/",
+                                "ReferenceDate":"\/Date(1573171200000+0000)\/"
                               }
                           ]
                         }'
@@ -1090,9 +1778,9 @@ paths:
       security:
         - OAuth2: [payroll.payruns.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getPayRuns
-      summary: searches PayRuns
+      summary: Retrieves pay runs
       parameters:
         - in: header
           name: If-Modified-Since
@@ -1124,9 +1812,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayRuns'
               example: '{ 
-                          "Id":"31a0c577-5cb0-4c19-a1f5-9f4d6de951d4",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573611063074)\/",
                           "PayRuns":[ 
                               { 
@@ -1156,9 +1844,24 @@ paths:
       security:
         - OAuth2: [payroll.payruns]
       tags:
-        - PayrollAU
-      summary: Use this method to create a PayRun
+        - PayrollAu
+      summary: Creates a pay run
       operationId: createPayRun
+      x-hasPayrollAuProblem: true
+      x-example:    
+        - payrun:
+          key: payRun
+          keyPascal: PayRun
+          keySnake: pay_run
+          is_object: true 
+        - payrollCalendarID:
+          is_uuid: true 
+          default: 00000000-0000-0000-0000-000000000000
+          key: payrollCalendarID
+          keyPascal: PayrollCalendarID
+          keySnake: payroll_calendar_id
+          object: payRun
+          is_last: true     
       responses:
         '200':
           description: A successful request
@@ -1167,9 +1870,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayRuns'
               example: '{
-                          "Id": "386f86d9-ae93-4a1d-9a10-eb46495c1184",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573685818311)/",
                           "PayRuns": [
                             {
@@ -1209,8 +1912,8 @@ paths:
       security:
         - OAuth2: [payroll.payruns.read]
       tags:
-        - PayrollAU
-      summary: searches for an payrun by unique id
+        - PayrollAu
+      summary: Retrieves a pay run by using a unique pay run id
       operationId: getPayRun
       parameters: 
         - name: PayRunID
@@ -1229,9 +1932,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayRuns'
               example: '{
-                          "Id": "d31f4401-875e-4a0c-9952-d5dd18519150",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573692531699)/",
                           "PayRuns": [
                             {
@@ -1284,10 +1987,24 @@ paths:
       security:
         - OAuth2: [payroll.payruns]
       tags:
-        - PayrollAU
-      summary: Update a PayRun 
+        - PayrollAu
+      summary: Updates a pay run 
       operationId: updatePayRun
       description:  Update properties on a single PayRun
+      x-example:    
+        - payrun:
+          key: payRun
+          keyPascal: PayRun
+          keySnake: pay_run
+          is_object: true 
+        - payrollCalendarID:
+          is_uuid: true 
+          default: 00000000-0000-0000-0000-000000000000
+          key: payrollCalendarID
+          keyPascal: PayrollCalendarID
+          keySnake: payroll_calendar_id
+          object: payRun
+          is_last: true     
       parameters: 
         - name: PayRunID
           in: path
@@ -1305,9 +2022,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayRuns'
               example: '{
-                          "Id": "7ad056f9-7dbd-4b66-bf11-1bb86d5aec92",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573693093680)/",
                           "PayRuns": [
                             {
@@ -1340,8 +2057,8 @@ paths:
       security:
         - OAuth2: [payroll.payslip.read]
       tags:
-        - PayrollAU
-      summary: searches for an payslip by unique id
+        - PayrollAu
+      summary: Retrieves for a payslip by a unique payslip id
       operationId: getPayslip
       parameters: 
         - name: PayslipID
@@ -1360,9 +2077,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/PayslipObject'
               example: '{
-                          "Id": "cd64816e-af39-4708-879c-4b6c8061abb2",
+                          "Id": "00000000-0000-0000-0000-000000000000",
                           "Status": "OK",
-                          "ProviderName": "java-sdk-oauth2-dev-02",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC": "/Date(1573692677622)/",
                           "Payslip": {
                             "EmployeeID": "cdfb8371-0b21-4b8a-8903-1024df6c391e",
@@ -1440,9 +2157,90 @@ paths:
       security:
         - OAuth2: [payroll.payslip]
       tags:
-        - PayrollAU
-      summary: Update a Payslip 
-      operationId: updatePayslipByID
+        - PayrollAu
+      summary: Updates a payslip 
+      operationId: updatePayslip
+      x-hasPayrollAuError: true
+      x-example:
+        - earningsLine:
+          is_object: true 
+          key: earningsLine
+          keyPascal: EarningsLine
+          keySnake: earnings_line
+        - earningsRateID:
+          is_uuid: true 
+          key: earningsRateID
+          keyPascal: EarningsRateID
+          keySnake: earnings_rate_id
+          default: 00000000-0000-0000-0000-000000000000
+          object: earningsLine
+        - ratePerUnit:
+          nonString: true 
+          key: ratePerUnit
+          keyPascal: RatePerUnit
+          keySnake: rate_per_unit
+          default: 20
+          object: earningsLine
+        - numberOfUnits:
+          nonString: true 
+          key: numberOfUnits
+          keyPascal: NumberOfUnits
+          keySnake: number_of_units
+          default: 1
+          object: earningsLine
+          is_last: true 
+        - earningsLines:
+          is_list: true 
+          key: earningsLines
+          keyPascal: EarningsLines
+          keySnake: earnings_lines
+          csharp: EarningsLine
+          java: EarningsLine
+        - addEarningsRates:
+          is_last: true 
+          is_list_add: true 
+          key: earningsLines
+          keyPascal: EarningsLines
+          keySnake: earnings_lines
+          java: EarningsLine
+          python: earnings_line
+          ruby: earnings_line
+          csharp: EarningsLine
+          object: earningsLine
+        - payslipLine:
+          key: payslipLine
+          keyPascal: PayslipLines
+          keySnake: payslip_lines
+          python: payslip_line
+          ruby: payslip_line
+          is_object: true 
+        - setEarningsLines:
+          key: earningsLines
+          keyPascal: EarningsLines
+          keySnake: earnings_lines
+          object: payslipLine
+          is_last: true 
+          default: earningsLines
+          nonString: true 
+        - payslipLines:
+          is_list: true
+          key: payslipLines
+          keyPascal: PayslipLines
+          keySnake: payslip_lines
+          csharp: PayslipLines
+          java: PayslipLines
+          python: payslipLines
+        - addPayslipLines:
+          is_last: true 
+          is_list_add: true 
+          key: payslipLines
+          keyPayscal: PayslipLines
+          keySnake: payslip_lines
+          java: PayslipLine
+          python: payslip_line
+          ruby: payslip_line
+          csharp: PayslipLine
+          object: payslipLine
       description:  Update lines on a single payslips
       parameters: 
         - name: PayslipID
@@ -1459,12 +2257,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PayslipObject'
+                $ref: '#/components/schemas/Payslips'
+              example: '{
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
+                          "DateTimeUTC": "/Date(1589568253813)/",
+                          "Payslips": [
+                            {
+                              "EmployeeID": "cdfb8371-0b21-4b8a-8903-1024df6c391e",
+                              "PayslipID": "c81e8bcc-56b0-4740-b46b-767753a6ee45",
+                              "FirstName": "Albus",
+                              "LastName": "Dumbledore",
+                              "LastEdited": "/Date(1589568253735+0000)/",
+                              "Tax": 0,
+                              "NetPay": 1.4,
+                              "UpdatedDateUTC": "/Date(1589568253735+0000)/",
+                              "DeductionLines": [
+                                {
+                                  "Amount": 4,
+                                  "CalculationType": "FIXEDAMOUNT",
+                                  "DeductionTypeID": "ed05ea82-e40a-4eb6-9c2e-4b3c03e7e938"
+                                }
+                              ]
+                            }
+                          ]
+                        }'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PayslipObject'
+              type: array
+              items:
+                $ref: '#/components/schemas/PayslipLines'
             example: '{
                         "Payslip": {
                           "EmployeeID": "cdfb8371-0b21-4b8a-8903-1024df6c391e",
@@ -1484,9 +2309,9 @@ paths:
       security:
         - OAuth2: [payroll.settings.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getSettings
-      summary: retrieve settings
+      summary: Retrieves payroll settings
       responses:
         '200':
           description: payroll settings
@@ -1495,9 +2320,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SettingsObject'
               example: '{ 
-                          "Id":"898a22ce-41d6-4553-b0b3-4cd486332dde",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573585252781)\/",
                           "Settings":{ 
                               "Accounts":[ 
@@ -1558,9 +2383,9 @@ paths:
       security:
         - OAuth2: [payroll.superfunds.read]
       tags:
-        - PayrollAU
-      operationId: getSuperFunds
-      summary: searches SuperFunds
+        - PayrollAu
+      operationId: getSuperfunds
+      summary: Retrieves superfunds
       parameters:
         - in: header
           name: If-Modified-Since
@@ -1592,9 +2417,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SuperFunds'
               example: '{ 
-                          "Id":"c5f5e907-e562-463c-b15c-1d6185fbb779",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573570941142)\/",
                           "SuperFunds":[ 
                               { 
@@ -1623,9 +2448,36 @@ paths:
       security:
         - OAuth2: [payroll.superfunds]
       tags:
-        - PayrollAU
-      summary: Use this method to create a super fund
+        - PayrollAu
+      summary: Creates a superfund
       operationId: createSuperfund
+      x-example:
+        - superfund:
+          key: superFund
+          keyPascal: SuperFund
+          keySnake: super_fund
+          is_object: true 
+        - type:
+          key: type
+          keyPascal: Type
+          keySnake: type
+          object: superfund
+          nonString: true 
+          default: REGULATED
+          php: XeroAPI\XeroPHP\Models\PayrollAu\SuperFundType::REGULATED
+          node: SuperFundType.REGULATED
+          ruby: XeroRuby::PayrollAu::SuperFundType::REGULATED
+          python_string: REGULATED
+          java: com.xero.models.payrollau.SuperFundType.REGULATED
+          csharp: SuperFundType.REGULATED
+        - usi:
+          key: USI
+          keyPascal: USI
+          keySnake: USI
+          default: 40022701955002
+          object: superfund
+          is_last: true 
+      x-hasPayrollAuProblem: true
       responses:
         '200':
           description: A successful request
@@ -1634,9 +2486,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SuperFunds'
               example: '{ 
-                          "Id":"6101dc74-d7b5-4d75-8aa6-ba02697167d9",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573583393024)\/",
                           "SuperFunds":[ 
                               { 
@@ -1678,8 +2530,8 @@ paths:
       security:
         - OAuth2: [payroll.superfunds.read]
       tags:
-        - PayrollAU
-      summary: searches for an Superfund by unique id
+        - PayrollAu
+      summary: Retrieves a superfund by using a unique superfund ID
       operationId: getSuperfund
       parameters: 
         - name: SuperFundID
@@ -1698,9 +2550,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SuperFunds'
               example: '{ 
-                          "Id":"a023294b-3656-4202-8127-c3d77a794fa7",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573571518603)\/",
                           "SuperFunds":[ 
                               { 
@@ -1721,10 +2573,36 @@ paths:
       security:
         - OAuth2: [payroll.superfunds]
       tags:
-        - PayrollAU
-      summary: Update a Superfund 
+        - PayrollAu
+      summary: Updates a superfund 
       operationId: updateSuperfund
       description:  Update properties on a single Superfund
+      x-example:
+        - superfund:
+          key: superFund
+          keyPascal: SuperFund
+          keySnake: super_fund
+          is_object: true 
+        - type:
+          key: type
+          keyPascal: Type
+          keySnake: type
+          object: superfund
+          nonString: true 
+          default: REGULATED
+          php: XeroAPI\XeroPHP\Models\PayrollAu\SuperFundType::REGULATED
+          node: SuperFundType.REGULATED
+          ruby: XeroRuby::PayrollAu::SuperFundType::REGULATED
+          python_string: REGULATED
+          java: com.xero.models.payrollau.SuperFundType.REGULATED
+          csharp: SuperFundType.REGULATED
+        - usi:
+          key: USI
+          keyPascal: USI
+          keySnake: USI
+          default: 40022701955002
+          object: superfund
+          is_last: true 
       parameters: 
         - name: SuperFundID
           in: path
@@ -1742,9 +2620,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SuperFunds'
               example: '{ 
-                          "Id":"5805d551-10ba-43f5-ac08-9e482d35cdcb",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573570941547)\/",
                           "SuperFunds":[ 
                               { 
@@ -1778,9 +2656,9 @@ paths:
       security:
         - OAuth2: [payroll.superfundproducts.read]
       tags:
-        - PayrollAU
-      operationId: getSuperFundProducts
-      summary: searches SuperFundProducts
+        - PayrollAu
+      operationId: getSuperfundProducts
+      summary: Retrieves superfund products
       parameters:
         - in: query
           name: ABN
@@ -1802,9 +2680,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SuperFundProducts'
               example: '{ 
-                          "Id":"d1c101ee-2fd8-47a3-ad3d-bbc64139181c",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573570720295)\/",
                           "SuperFundProducts":[ 
                               { 
@@ -1827,9 +2705,9 @@ paths:
       security:
         - OAuth2: [payroll.timesheets.read]
       tags:
-        - PayrollAU
+        - PayrollAu
       operationId: getTimesheets
-      summary: searches timesheets
+      summary: Retrieves timesheets
       parameters:
         - in: header
           name: If-Modified-Since
@@ -1861,9 +2739,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Timesheets'
               example: '{ 
-                        "Id":"581271e7-d02d-4966-ae6c-2a4fb9c48e5a",
-                        "Status":"OK",
-                        "ProviderName":"java-sdk-oauth2-dev-02",
+                        "Id": "00000000-0000-0000-0000-000000000000",
+                        "Status": "OK",
+                        "ProviderName": "provider-name",
                         "DateTimeUTC":"\/Date(1573516183708)\/",
                         "Timesheets":[ 
                             { 
@@ -1926,9 +2804,85 @@ paths:
       security:
         - OAuth2: [payroll.timesheets]
       tags:
-        - PayrollAU
-      summary: Use this method to create a timesheet
+        - PayrollAu
+      summary: Creates a timesheet
       operationId: createTimesheet
+      x-hasPayrollAuProblem: true
+      x-example:
+        - startDateValue:
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 23)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 23)"
+          csharp: "new DateTime(2020, 10, 23)"
+          php: "new DateTime('2020-10-23')"
+          node: "'2020-10-23'"
+          python: "dateutil.parser.parse('2020-10-23T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - endDateValue:
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          csharp: "new DateTime(2020, 10, 30)"
+          php: "new DateTime('2020-10-30')"
+          node: "'2020-10-30'"
+          python: "dateutil.parser.parse('2020-10-30T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"   
+        - timesheet:
+          key: timesheet
+          keyPascal: Timesheet
+          keySnake: timesheet
+          is_object: true    
+        - EmployeeID:
+          is_uuid: true 
+          default: 00000000-0000-0000-0000-000000000000
+          key: employeeID
+          keyPascal: EmployeeID
+          keySnake: employee_id
+          object: timesheet
+        - startDate:
+          is_variable: true
+          nonString: true
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          default: startDate
+          python: start_date
+          ruby: start_date
+          object: timesheet
+        - endDate:
+          is_variable: true
+          nonString: true
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          default: endDate
+          python: end_date
+          ruby: end_date
+          object: timesheet
+        - status:
+          key: status
+          keyPascal: Status
+          keySnake: status
+          is_last: true
+          nonString: true
+          default: DRAFT
+          php: XeroAPI\XeroPHP\Models\PayrollAu\TimesheetStatus::DRAFT
+          node: TimesheetStatus.DRAFT
+          ruby: XeroRuby::PayrollAu::TimesheetStatus::DRAFT
+          python_string: DRAFT
+          java: com.xero.models.payrollau.TimesheetStatus.DRAFT
+          csharp: TimesheetStatus.DRAFT
+          object: timesheet
       responses:
         '200':
           description: A successful request
@@ -1937,9 +2891,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Timesheets'
               example: '{ 
-                          "Id":"fa8416a1-e02b-4b6f-bad5-3c5a2dbba76e",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573516185143)\/",
                           "Timesheets":[ 
                               { 
@@ -2009,8 +2963,8 @@ paths:
       security:
         - OAuth2: [payroll.timesheets.read]
       tags:
-        - PayrollAU
-      summary: searches for an timesheet by unique id
+        - PayrollAu
+      summary: Retrieves a timesheet by using a unique timesheet id
       operationId: getTimesheet
       parameters: 
         - name: TimesheetID
@@ -2029,9 +2983,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/TimesheetObject'
               example: '{ 
-                          "Id":"34f58840-6f35-442a-9da7-a487265a7767",
-                          "Status":"OK",
-                          "ProviderName":"java-sdk-oauth2-dev-02",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
+                          "ProviderName": "provider-name",
                           "DateTimeUTC":"\/Date(1573516184161)\/",
                           "Timesheet":{ 
                               "TimesheetID":"df954ca3-3a70-47e9-9a3e-80711e7c5f90",
@@ -2062,10 +3016,85 @@ paths:
       security:
         - OAuth2: [payroll.timesheets]
       tags:
-        - PayrollAU
-      summary: Update a Timesheet 
+        - PayrollAu
+      summary: Updates a timesheet 
       operationId: updateTimesheet
       description:  Update properties on a single timesheet
+      x-example:
+        - startDateValue:
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 23)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 23)"
+          csharp: "new DateTime(2020, 10, 23)"
+          php: "new DateTime('2020-10-23')"
+          node: "'2020-10-23'"
+          python: "dateutil.parser.parse('2020-10-23T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"
+        - endDateValue:
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          is_date: true
+          java_datatype: LocalDate
+          csharp_datatype: DateTime
+          default: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          java: "LocalDate.of(2020, Month.OCTOBER, 30)"
+          csharp: "new DateTime(2020, 10, 30)"
+          php: "new DateTime('2020-10-30')"
+          node: "'2020-10-30'"
+          python: "dateutil.parser.parse('2020-10-30T00:00:00Z')"
+          ruby: "'YYYY-MM-DD'"   
+        - timesheet:
+          key: timesheet
+          keyPascal: Timesheet
+          keySnake: timesheet
+          is_object: true    
+        - EmployeeID:
+          is_uuid: true 
+          default: 00000000-0000-0000-0000-000000000000
+          key: employeeID
+          keyPascal: EmployeeID
+          keySnake: employee_id
+          object: timesheet
+        - startDate:
+          is_variable: true
+          nonString: true
+          key: startDate
+          keyPascal: StartDate
+          keySnake: start_date
+          default: startDate
+          python: start_date
+          ruby: start_date
+          object: timesheet
+        - endDate:
+          is_variable: true
+          nonString: true
+          key: endDate
+          keyPascal: EndDate
+          keySnake: end_date
+          default: endDate
+          python: end_date
+          ruby: end_date
+          object: timesheet
+        - status:
+          key: status
+          keyPascal: Status
+          keySnake: status
+          is_last: true
+          nonString: true
+          default: DRAFT
+          php: XeroAPI\XeroPHP\Models\PayrollAu\TimesheetStatus::DRAFT
+          node: TimesheetStatus.DRAFT
+          ruby: XeroRuby::PayrollAu::TimesheetStatus::DRAFT
+          python_string: DRAFT
+          java: com.xero.models.payrollau.TimesheetStatus.DRAFT
+          csharp: TimesheetStatus.DRAFT
+          object: timesheet
       parameters: 
         - name: TimesheetID
           in: path
@@ -2083,8 +3112,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Timesheets'
               example: '{ 
-                          "Id":"42f97160-485a-400d-93e2-275f5b199694",
-                          "Status":"OK",
+                          "Id": "00000000-0000-0000-0000-000000000000",
+                          "Status": "OK",
                           "ProviderName":"3f93110a-df13-49c7-b82f-a069813df188",
                           "DateTimeUTC":"\/Date(1573516185258)\/",
                           "Timesheets":[ 
@@ -2209,6 +3238,7 @@ components:
   schemas:
     Employees:
       type: object
+      x-isObjectArray: true
       properties:
         Employees:
           type: array
@@ -2220,7 +3250,6 @@ components:
         - FirstName
         - LastName
         - DateOfBirth
-        - HomeAddress
       properties:
         FirstName:
           description: First name of employee
@@ -2233,12 +3262,14 @@ components:
         DateOfBirth:
           description: Date of birth of the employee (YYYY-MM-DD)
           type: string
+          x-is-msdate: true
           example: '/Date(322560000000+0000)/'   
         HomeAddress:
           $ref: '#/components/schemas/HomeAddress'
         StartDate:
           description: Start date for an employee (YYYY-MM-DD)
           type: string
+          x-is-msdate: true
           example: '/Date(320284900000+0000)/'
         Title:
           description: Title of the employee
@@ -2256,10 +3287,10 @@ components:
           description: The employee’s gender. See Employee Gender
           type: string
           enum:
-          - N   #Not Stated  
-          - M   #Male  
-          - F   #Female  
-          - I   #Non-Binary
+          - N
+          - M
+          - F
+          - I
           example: F
         Phone:
           description: Employee phone number
@@ -2311,19 +3342,26 @@ components:
         TerminationDate:
           description: Employee Termination Date (YYYY-MM-DD)
           type: string
-          example: 2019-01-01
+          x-is-msdate: true
+          example: '/Date(1584662400000+0000)/'
         BankAccounts:
           type: array
           items:
             $ref: '#/components/schemas/BankAccount'
         PayTemplate:
-            $ref: '#/components/schemas/PayTemplate'
+          $ref: '#/components/schemas/PayTemplate'
         OpeningBalances:
-            $ref: '#/components/schemas/OpeningBalances'
+          $ref: '#/components/schemas/OpeningBalances'
+        TaxDeclaration: 
+          $ref: '#/components/schemas/TaxDeclaration'
         LeaveBalances:
           type: array
           items:
             $ref: '#/components/schemas/LeaveBalance'
+        LeaveLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveLine'
         SuperMemberships:
           type: array
           items:
@@ -2333,9 +3371,17 @@ components:
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        ValidationErrors: 
+          description: Displays array of validation error messages from the API
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     LeaveApplications:
       type: object
+      x-isObjectArray: true
       properties:
         LeaveApplications:
           type: array
@@ -2366,11 +3412,13 @@ components:
         StartDate:
           description: Start date of the leave (YYYY-MM-DD)
           type: string
-          example: '/Date(320284900000+0000)/'
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         EndDate:
           description: End date of the leave (YYYY-MM-DD)
           type: string
-          example: '/Date(320284900000+0000)/'
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         Description:
           description: The Description of the Leave
           type: string
@@ -2379,22 +3427,36 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LeavePeriod'
+        UpdatedDateUTC:
+          description: Last modified timestamp
+          type: string
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        ValidationErrors: 
+          description: Displays array of validation error messages from the API
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     LeavePeriod:
       type: object
       properties:
         NumberOfUnits:
           description: The Number of Units for the leave
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 22.8000
         PayPeriodEndDate:
           description: The Pay Period End Date (YYYY-MM-DD)
           type: string
-          example: 2013-05-12T00:00:00
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         PayPeriodStartDate:
           description: The Pay Period Start Date (YYYY-MM-DD)
           type: string
-          example: 2013-04-29T00:00:00
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         LeavePeriodStatus:
           $ref: '#/components/schemas/LeavePeriodStatus'
     LeavePeriodStatus:
@@ -2404,6 +3466,7 @@ components:
       - PROCESSED #A LeavePeriod is set to the "Processed" status when the Payrun associated with the LeavePeriod is "POSTED"
     PayItems:
       type: object
+      x-isObjectArray: true
       properties:
         PayItems:
           $ref: '#/components/schemas/PayItem'
@@ -2428,6 +3491,7 @@ components:
             $ref: '#/components/schemas/ReimbursementType'
     PayrollCalendars:
       type: object
+      x-isObjectArray: true
       properties:
         PayrollCalendars:
           type: array
@@ -2445,18 +3509,37 @@ components:
         StartDate:
           description: The start date of the upcoming pay period. The end date will be calculated based upon this date, and the calendar type selected (YYYY-MM-DD)
           type: string
-          example: 2012-08-17T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         PaymentDate:
           description: The date on which employees will be paid for the upcoming pay period (YYYY-MM-DD)
           type: string
-          example: 2012-08-17T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         PayrollCalendarID:
           description: Xero identifier
           type: string
           format: uuid
           example: e0eb6747-7c17-4075-b804-989f8d4e5d39
+        UpdatedDateUTC:
+          description: Last modified timestamp
+          type: string
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        ReferenceDate:
+          description: Reference Date (YYYY-MM-DD)
+          type: string
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'
+        ValidationErrors: 
+          description: Displays array of validation error messages from the API
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     Timesheets:
       type: object
+      x-isObjectArray: true
       properties:
         Timesheets:
           type: array
@@ -2482,17 +3565,20 @@ components:
         StartDate:
           description: Period start date (YYYY-MM-DD)
           type: string
-          example: 2013-02-01T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         EndDate:
           description: Period end date (YYYY-MM-DD)
           type: string
-          example: 2013-02-07T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         Status:
           $ref: '#/components/schemas/TimesheetStatus'
         Hours:
           description:  Timesheet total hours
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 31.0000
         TimesheetID:
           description: The Xero identifier for a Payroll Timesheet
@@ -2501,6 +3587,17 @@ components:
           example: 049765fc-4506-48fb-bf88-3578dec0ec47
         TimesheetLines:
           $ref: '#/components/schemas/TimesheetLines'
+        UpdatedDateUTC:
+          description: Last modified timestamp
+          type: string
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        ValidationErrors: 
+          description: Displays array of validation error messages from the API
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     TimesheetLines:
       type: array
       items:
@@ -2524,14 +3621,17 @@ components:
           items:
             description: Number of units of a Timesheet line
             type: number
-            format: float
+            format: double
             example: 3.00
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
     PayRuns:
       type: object
+      x-isObjectArray: true
       properties:
         PayRuns:
           type: array
@@ -2555,17 +3655,20 @@ components:
         PayRunPeriodStartDate:
           description: Period Start Date for the PayRun (YYYY-MM-DD)  
           type: string
-          example: 2013-02-01T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         PayRunPeriodEndDate:
           description: Period End Date for the PayRun (YYYY-MM-DD)  
           type: string
-          example: 2013-02-07T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         PayRunStatus:
           $ref: '#/components/schemas/PayRunStatus'
         PaymentDate:
           description: Payment Date for the PayRun (YYYY-MM-DD)  
           type: string
-          example: 2013-02-07T00:00:00Z
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         PayslipMessage:
           description: Payslip message for the PayRun
           type: string
@@ -2573,7 +3676,9 @@ components:
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
         Payslips:
           description: The payslips in the payrun
           type: array
@@ -2582,38 +3687,50 @@ components:
         Wages:
           description: The total Wages for the Payrun
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 1060.5
         Deductions:
           description: The total Deductions for the Payrun
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.0
         Tax:
           description: The total Tax for the Payrun
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 198.0
         Super:
           description: The total Super for the Payrun
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 75.6
-        Reimbursements:
+        Reimbursement:
           description: The total Reimbursements for the Payrun
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.0
         NetPay:
           description: The total NetPay for the Payrun
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 862.5
+        ValidationErrors: 
+          description: Displays array of validation error messages from the API
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     PayslipSummary:
       type: object
       properties:
         EmployeeID:
           description: The Xero identifier for an employee
+          type: string
           format: uuid
           example: 4729f087-8eec-49c1-8294-4d11a5a0a37c
         PayslipID:
@@ -2629,54 +3746,111 @@ components:
           description: Last name of employee
           type: string
           example: Jones
+        EmployeeGroup:
+          description: Employee group name
+          type: string
+          example: Marketing
         Wages:
           description: The Wages for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 1060.5
         Deductions:
           description: The Deductions for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.0
         Tax:
           description: The Tax for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 198.0
         Super:
           description: The Super for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 75.6
         Reimbursements:
           description: The Reimbursements for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.0
         NetPay:
           description: The NetPay for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 862.5
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+    PayslipLines:
+      type: object
+      properties:
+        EarningsLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/EarningsLine'
+        LeaveEarningsLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveEarningsLine'
+        TimesheetEarningsLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/EarningsLine'
+        DeductionLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeductionLine'
+        LeaveAccrualLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaveAccrualLine'
+        ReimbursementLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReimbursementLine'
+        SuperannuationLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuperannuationLine'
+        TaxLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxLine'
     PayslipObject:
       type: object
       properties:
         Payslip:
           $ref: '#/components/schemas/Payslip'
+    Payslips:
+      type: object
+      x-isObjectArray: true
+      properties:
+        Payslips:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payslip'
     Payslip:
       type: object
       properties:
         EmployeeID:
           description: The Xero identifier for an employee
+          type: string
           format: uuid
           example: 4729f087-8eec-49c1-8294-4d11a5a0a37c
         PayslipID:
           description: Xero identifier for the payslip  
+          type: string
           format: uuid
           example: f3c0874d-7cdd-459a-a95c-d90d51decc42
         FirstName:
@@ -2690,32 +3864,38 @@ components:
         Wages:
           description: The Wages for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 1060.5
         Deductions:
           description: The Deductions for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.0
         Tax:
           description: The Tax for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 198.0
         Super:
           description: The Super for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 75.6
         Reimbursements:
           description: The Reimbursements for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 0.0
         NetPay:
           description: The NetPay for the Payslip
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 862.5
         EarningsLines:
           type: array
@@ -2752,7 +3932,9 @@ components:
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
     LeaveAccrualLine:
       type: object
       properties:
@@ -2764,7 +3946,8 @@ components:
         NumberOfUnits:
           description: Leave Accrual number of units
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 105.50
         AutoCalculate:
           description: If you want to auto calculate leave.
@@ -2785,7 +3968,8 @@ components:
         MinimumMonthlyEarnings:
           description:  Superannuation minimum monthly earnings.
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 100.50
         ExpenseAccountCode:
           description: Superannuation expense account code.
@@ -2798,24 +3982,33 @@ components:
         PaymentDateForThisPeriod:
           description:   Superannuation payment date for the current period (YYYY-MM-DD)
           type: string
-          example: 2019-10-01
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         Percentage:
           description: Superannuation percentage  
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 4.0000
         Amount:
           description: Superannuation amount
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.50
     TaxLine:
       type: object
       properties:
+        PayslipTaxLineID:
+          description:   Xero identifier for payslip tax line ID.
+          type: string
+          format: uuid
+          example: e0eb6747-7c17-4075-b804-989f8d4e5d39
         Amount:
           description: The tax line amount
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 50.00
         TaxTypeName:
           description: Name of the tax type.
@@ -2841,12 +4034,14 @@ components:
         RatePerUnit:
           description: Rate per unit of the EarningsLine.
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 38.0000
         NumberOfUnits:
           description: Earnings rate number of units.
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 2.5
     SettingsObject:
       type: object
@@ -2891,10 +4086,12 @@ components:
                   type: string
         DaysInPayrollYear:
           description: Number of days in the Payroll year
-          type: number
+          type: integer
+          format: int32
           example: 365
     SuperFunds:
       type: object
+      x-isObjectArray: true
       properties:
         SuperFunds:
           type: array
@@ -2948,8 +4145,20 @@ components:
           description: The USI of the Regulated SuperFund
           type: string
           example: 40022701955001
+        UpdatedDateUTC:
+          description: Last modified timestamp
+          type: string
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        ValidationErrors: 
+          description: Displays array of validation error messages from the API
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     SuperFundProducts:
       type: object
+      x-isObjectArray: true
       properties:
         SuperFundProducts:
           type: array
@@ -2960,19 +4169,19 @@ components:
       properties:
         ABN:
           description: The ABN of the Regulated SuperFund
-          format: string
+          type: string
           example: 839182848805
         USI:
           description: The USI of the Regulated SuperFund  
-          format: string
+          type: string
           example: 839182848805001
         SPIN:
           description: The SPIN of the Regulated SuperFund. This field has been deprecated. New superfunds will not have a SPIN value. The USI field should be used instead of SPIN
-          format: string
+          type: string
           example: NML0117AU
         ProductName:
           description: The name of the Regulated SuperFund
-          format: string
+          type: string
           example: MLC Navigator Retirement Plan - Superannuation Service (including Series 2) (MLC Superannuation Fund)
     Account:
       type: object
@@ -3037,24 +4246,33 @@ components:
         Multiplier:
           description: This is the multiplier used to calculate the rate per unit, based on the employee’s ordinary earnings rate. For example, for time and a half enter 1.5. Only applicable if RateType is MULTIPLE
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 1.5
         AccrueLeave:
           description: Indicates that this earnings rate should accrue leave. Only applicable if RateType is MULTIPLE
-          type: number
-          format: float
-          example: 1.5
+          type: boolean
+          example: false
         Amount:
           description: Optional Amount for FIXEDAMOUNT RateType EarningsRate
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 50.30
         EmploymentTerminationPaymentType:
           $ref: '#/components/schemas/EmploymentTerminationPaymentType'
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        CurrentRecord:
+          description: Is the current record
+          type: boolean
+          example: true
+        AllowanceType:
+          $ref: '#/components/schemas/AllowanceType'
     DeductionType:
       type: object
       properties:
@@ -3087,8 +4305,19 @@ components:
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
           readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        DeductionCategory:
+          type: string
+          enum:
+            - NONE
+            - UNIONFEES
+            - WORKPLACEGIVING
+        CurrentRecord:
+          description: Is the current record
+          type: boolean
+          example: true
     LeaveType:
       type: object
       properties:
@@ -3101,14 +4330,6 @@ components:
           description: The type of units by which leave entitlements are normally tracked. These are typically the same as the type of units used for the employee’s ordinary earnings rate
           type: string
           example: Hours
-        IsPaidLeave:
-          description: Set this to indicate that an employee will be paid when taking this type of leave
-          type: boolean
-          example: true
-        ShowOnPayslip:
-          description: Set this if you want a balance for this leave type to be shown on your employee’s payslips
-          type: boolean
-          example: true
         LeaveTypeID:
           description: Xero identifier
           type: string
@@ -3117,18 +4338,31 @@ components:
         NormalEntitlement:
           description: The number of units the employee is entitled to each year
           type: number
-          format: float
+          format: double
           example: 152.0000
         LeaveLoadingRate:
           description: Enter an amount here if your organisation pays an additional percentage on top of ordinary earnings when your employees take leave (typically 17.5%)
           type: number
-          format: float
-          example: 12.0000
+          format: double
+          example: 2.0000
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
           readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        IsPaidLeave:
+          description: Set this to indicate that an employee will be paid when taking this type of leave
+          type: boolean
+          example: true
+        ShowOnPayslip:
+          description: Set this if you want a balance for this leave type to be shown on your employee’s payslips
+          type: boolean
+          example: true
+        CurrentRecord:
+          description: Is the current record
+          type: boolean
+          example: true
     ReimbursementType:
       type: object
       properties:
@@ -3149,7 +4383,13 @@ components:
         UpdatedDateUTC:
           description: Last modified timestamp
           type: string
-          example: 2018-04-01T23:02:36
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
+        CurrentRecord:
+          description: Is the current record
+          type: boolean
+          example: true
     HomeAddress:
       required:
         - AddressLine1
@@ -3178,9 +4418,6 @@ components:
           example: AUSTRALIA
       type: object
     TaxDeclaration:
-      required:
-        - EmployeeID
-        - EmploymentBasis
       properties:
         EmployeeID:
           description: Address line 1 for employee home address
@@ -3236,6 +4473,16 @@ components:
           type: number
           format: int
           example: 75
+        HasStudentStartupLoan:
+          description: If the employee is eligible for student startup loan rules
+          type: boolean
+          example: true
+        UpdatedDateUTC:
+          description: Last modified timestamp
+          type: string
+          readOnly: true
+          x-is-msdate-time: true
+          example: '/Date(1583967733054+0000)/'
       type: object
     BankAccount:
       type: object
@@ -3263,7 +4510,8 @@ components:
         Amount:
           description: Fixed amounts (for example, if an employee wants to have $100 of their salary transferred to one account, and the remaining amount to another)
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 200.00
     PayTemplate:
       type: object
@@ -3292,7 +4540,6 @@ components:
       type: object
       required:
       - EarningsRateID
-      - CalculationType
       properties:
         EarningsRateID:
           description: Xero unique id for earnings rate
@@ -3304,43 +4551,49 @@ components:
         AnnualSalary:
           description: Annual salary for earnings line
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 40000.00
         NumberOfUnitsPerWeek:
           description: number of units for earning line
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 38.0000
         RatePerUnit:
           description: Rate per unit of the EarningsLine.
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 38.0000
         NormalNumberOfUnits:
           description: Normal number of units for EarningsLine. Applicable when RateType is "MULTIPLE"
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 38.0000
         Amount:
           description: Earnings rate amount
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 38.0000
         NumberOfUnits:
           description: Earnings rate number of units.
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 2.5
         FixedAmount:
           description: Earnings rate amount. Only applicable if the EarningsRate RateType is Fixed
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 2.5
     DeductionLine:
       type: object
       required:
       - DeductionTypeID
-      - CalculationType
       properties:
         DeductionTypeID:
           description: Xero deduction type identifier
@@ -3352,17 +4605,20 @@ components:
         Amount:
           description: Deduction type amount
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.00
         Percentage:
           description: The Percentage of the Deduction
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.00
         NumberOfUnits:
           description: Deduction number of units
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.00
     SuperLine:
       type: object
@@ -3377,9 +4633,10 @@ components:
         CalculationType:
           $ref: '#/components/schemas/SuperannuationCalculationType'
         MinimumMonthlyEarnings:
-          description: amount of mimimum earnings
+          description: amount of minimum earnings
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 450.00
         ExpenseAccountCode:
           description: expense account code
@@ -3392,15 +4649,18 @@ components:
         Percentage:
           description: percentage for super line
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 9.0000
         Amount:
           description: Super membership amount
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.00
     ReimbursementLines:
       type: object
+      x-isObjectArray: true
       description: The reimbursement type lines
       properties:
         ReimbursementLines:
@@ -3418,7 +4678,8 @@ components:
         Amount:
           description: Reimbursement type amount
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 10.00
         Description:
           description: Reimbursement lines description (max length 50)
@@ -3431,6 +4692,7 @@ components:
           example: 420
     LeaveLines:
       type: object
+      x-isObjectArray: true
       description: The leave type lines
       properties:
         Employee:
@@ -3446,9 +4708,7 @@ components:
           format: uuid
           example: 742998cb-7584-4ecf-aa88-d694f59c50f9
         CalculationType:
-          description: Calculation type for leave line ???
-          type: string
-          example: FIXEDAMOUNTEACHPERIOD
+          $ref: '#/components/schemas/LeaveLineCalculationType'
         EntitlementFinalPayPayoutType:
           $ref: '#/components/schemas/EntitlementFinalPayPayoutType'
         EmploymentTerminationPaymentType:
@@ -3458,9 +4718,22 @@ components:
           type: boolean
           example: true
         NumberOfUnits:
-          description: Leave number of units
+          description: Number of units for leave line.
           type: number
-          format: float
+          format: double
+          x-is-money: true
+          example: 2.5
+        AnnualNumberOfUnits:
+          description: Hours of leave accrued each year
+          type: number
+          format: double
+          x-is-money: true
+          example: 2.5
+        FullTimeNumberOfUnitsPerPeriod:
+          description: Normal ordinary earnings number of units for leave line.
+          type: number
+          format: double
+          x-is-money: true
           example: 2.5
     OpeningBalances:
       type: object
@@ -3468,7 +4741,8 @@ components:
         OpeningBalanceDate:
           description: Opening Balance Date. (YYYY-MM-DD)
           type: string
-          example: 
+          x-is-msdate: true
+          example: '/Date(322560000000+0000)/'   
         Tax:
           description: Opening Balance tax
           type: string
@@ -3507,7 +4781,8 @@ components:
         NumberOfUnits :
           description: The balance of the leave available
           type: number
-          format: float
+          format: double
+          x-is-money: true
           example: 81.2602
         TypeOfUnits :
           description: The type of units as specified by the LeaveType (see PayItems)
@@ -3517,8 +4792,8 @@ components:
       type: string
       enum:
       - FIXEDAMOUNT    
-      - MULTIPLE  Multiple of Employee’s Ordinary Earnings Rate - an earnings rate which is derived from an employee’s ordinary earnings rate  
-      - RATEPERUNIT  An earnings rate allowing entry of a rate per unit
+      - MULTIPLE  #Multiple of Employee’s Ordinary Earnings Rate - an earnings rate which is derived from an employee’s ordinary earnings rate  
+      - RATEPERUNIT  #An earnings rate allowing entry of a rate per unit
     EarningsType: 
       type: string
       enum:
@@ -3527,12 +4802,26 @@ components:
       - OVERTIMEEARNINGS
       - ALLOWANCE
       - LUMPSUMD
-      - EMPLOYMENTTERMINATIONPAYMENT    
+      - EMPLOYMENTTERMINATIONPAYMENT
+      - LUMPSUMA
+      - LUMPSUMB
+      - BONUSESANDCOMMISSIONS
+      - LUMPSUME
     EmploymentTerminationPaymentType: 
       type: string
       enum:
       - O  
       - R  
+    AllowanceType: 
+      type: string
+      enum: 
+      - CAR
+      - TRANSPORT
+      - TRAVEL
+      - LAUNDRY
+      - MEALS
+      - JOBKEEPER
+      - OTHER
     CalendarType: 
       type: string
       enum:
@@ -3554,6 +4843,15 @@ components:
       - FIXEDAMOUNT  
       - PRETAX  
       - POSTTAX
+    LeaveLineCalculationType: 
+      description: Calculation type for leave line for Opening Balance on Employee
+      type: string
+      enum:
+      - NOCALCULATIONREQUIRED  
+      - FIXEDAMOUNTEACHPERIOD
+      - ENTERRATEINPAYTEMPLATE
+      - BASEDONORDINARYEARNINGS
+      - ""
     SuperannuationContributionType: 
       type: string
       enum:
@@ -3600,6 +4898,8 @@ components:
       - PAYGMANUAL  
       - ETPOMANUAL
       - ETPRMANUAL
+      - SCHEDULE5MANUAL
+      - SCHEDULE5STSLMANUAL
     SuperFundType: 
       type: string
       enum:
@@ -3632,6 +4932,8 @@ components:
       - DRAFT
       - PROCESSED
       - APPROVED
+      - REJECTED
+      - REQUESTED
     EmployeeStatus:
       type: string
       description: Employee Status Types
@@ -3643,14 +4945,14 @@ components:
       description: State abbreviation for employee home address
       example: VIC
       enum:
-      - ACT  #Australian Capital Territory  
-      - NSW  #New South Wales  
-      - NT  #Northern Territory  
-      - QLD  #Queensland  
-      - SA  #South Australia  
-      - TAS  #Tasmania  
-      - VIC  #Victoria  
-      - WA  #Western Australia
+      - ACT
+      - NSW
+      - NT
+      - QLD
+      - SA 
+      - TAS
+      - VIC
+      - WA
     SuperMembership:
       type: object
       required:
@@ -3668,8 +4970,8 @@ components:
           format: uuid
           example: 2187a42b-639a-45cb-9eed-cd4ae488306a
         EmployeeNumber:
-          description: The memberhsip number assigned to the employee by the super fund.
-          type: number
+          description: The membership number assigned to the employee by the super fund.
+          type: string
           example: 1234
     AccountType:
       description: See Account Types
@@ -3697,6 +4999,7 @@ components:
         - SUPERANNUATIONEXPENSE
         - SUPERANNUATIONLIABILITY
         - WAGESEXPENSE
+        - WAGESPAYABLELIABILITY
     APIException:
       description: The object returned for a bad request
       type: object
@@ -3714,3 +5017,11 @@ components:
           description: The message describing the error
           type: string
           example: No property or field 'hi' exists in type 'Employee' (at index 0)
+    ValidationError:
+      externalDocs:
+        url: 'https://developer.xero.com/documentation/api/http-response-codes'
+      properties:
+        Message:
+          description: Validation error message
+          type: string
+      type: object

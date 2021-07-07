@@ -1,11 +1,15 @@
 openapi: 3.0.0
 info:
-  version: "1.0.0"
-  title: Bank Feeds API
-  description: The Xero Bank Feeds API 
-  contact: 
-    name: Xero API team
-    email: api@xero.com
+  version: "2.13.4"
+  title: Xero Bank Feeds API
+  description: The Bank Feeds API is a closed API that is only available to financial institutions that have an established financial services partnership with Xero.
+               If you're an existing financial services partner that wants access, contact your local Partner Manager.
+               If you're a financial institution who wants to provide bank feeds to your business customers, contact us to become a financial services partner.
+  termsOfService: "https://developer.xero.com/xero-developer-platform-terms-conditions/"
+  contact:
+    name: "Xero Platform Team"
+    email: "api@xero.com"
+    url: "https://developer.xero.com"
   license:
     name: MIT 
     url: 'https://github.com/XeroAPI/Xero-OpenAPI/blob/master/LICENSE'
@@ -21,7 +25,7 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
-      summary: searches feed connections
+      summary: Searches for feed connections
       operationId: getFeedConnections
       description: By passing in the appropriate options, you can search for available feed connections in the system.
       parameters: 
@@ -38,7 +42,7 @@ paths:
             type: integer
             example: 100
       responses:
-        '201':
+        '202':
           description: search results matching criteria returned with pagination and items array
           content:
             application/json:
@@ -82,8 +86,9 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
-      summary: create one or more new feed connection
+      summary: Create one or more new feed connection
       operationId: createFeedConnections
+      x-hasBankFeedsValidationError: true
       description: By passing in the FeedConnections array object in the body, you can create one or more new feed connections
       requestBody:
         required: true
@@ -105,7 +110,7 @@ paths:
                 ]
               }
       responses:
-        '201':
+        '202':
           description: success new feed connection(s)response
           content:
             application/json:
@@ -122,13 +127,26 @@ paths:
                   ]
                 }
         '400':
-          description: 'invalid input, object invalid'
-        '409':
           description: failed to create new feed connection(s)response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/FeedConnections'
+              example:
+                {
+                    "items": [
+                        {
+                            "accountToken": "foobar71760",
+                            "status": "REJECTED",
+                            "error": {
+                                "type": "invalid-request",
+                                "title": "Invalid Request",
+                                "status": 400,
+                                "detail": "For the request field 'AccountNumber' exceeded the maximum length of 40."
+                            }
+                        }
+                    ]
+                }
   /FeedConnections/{id}:
     parameters:
       - $ref: '#/components/parameters/requiredHeader'
@@ -137,7 +155,7 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
-      summary: Retrive single feed connection based on unique id provided
+      summary: Retrieve single feed connection based on a unique id provided
       operationId: getFeedConnection
       description: By passing in a FeedConnection Id options, you can search for matching feed connections
       parameters: 
@@ -176,7 +194,7 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
-      summary: Delete an exsiting feed connection
+      summary: Delete an existing feed connection
       operationId: deleteFeedConnections
       description: By passing in FeedConnections array object in the body, you can delete a feed connection.
       requestBody:
@@ -229,7 +247,7 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
-      summary: Retrive all statements based on unique search criteria
+      summary: Retrieve all statements
       operationId: getStatements
       description: By passing in parameters, you can search for matching statements
       parameters:
@@ -334,7 +352,9 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
+      summary: Creates one or more new statements
       operationId: createStatements
+      x-hasBankFeedsValidationError: true
       responses:
         '202':
           description: Success returns Statements array of objects in response
@@ -471,7 +491,8 @@ paths:
                               "transactionId":"123446422",
                               "payeeName":"StarLord90315",
                               "reference":"Foobar95578",
-                              "chequeNumber":"12379009"
+                              "chequeNumber":"12379009",
+                              "transactionType": "Refund"
                             }
                         ]
                       },
@@ -496,7 +517,8 @@ paths:
                               "transactionId":"123449402",
                               "payeeName":"StarLord56705",
                               "reference":"Foobar67355",
-                              "chequeNumber":"12379350"
+                              "chequeNumber":"12379350",
+                              "transactionType": "Currency Conversion Fee"
                             }
                         ]
                       }
@@ -510,7 +532,7 @@ paths:
         - OAuth2: [bankfeeds]
       tags:
         - BankFeeds
-      summary: Retrive single statement based on unique id provided
+      summary: Retrieve single statement based on unique id provided
       operationId: getStatement
       description: By passing in a statement id, you can search for matching statements
       parameters:
@@ -621,8 +643,6 @@ components:
       externalDocs:
         url: 'https://developer.xero.com/documentation/bank-feeds-api/feed-connections'
       type: object
-      required:
-        - id
       properties:
         id:
           type: string
@@ -676,6 +696,7 @@ components:
           items:
             $ref: '#/components/schemas/Statement'
     Pagination:
+      type: object
       properties:
         page:
           type: integer
@@ -695,8 +716,6 @@ components:
           description: Number of items returned
     Statement:
       type: object
-      required:
-        - id
       properties:
         id:
           type: string
@@ -742,6 +761,7 @@ components:
         amount:
           type: number
           format: double
+          x-is-money: true
           example: "9.0000"
           description: decimal(19,4) unsigned Opening/closing balance amount.
         creditDebitIndicator:
@@ -753,6 +773,7 @@ components:
         amount:
           type: number
           format: double
+          x-is-money: true
           example: "10.1340"
         creditDebitIndicator:
           $ref: '#/components/schemas/CreditDebitIndicator'
@@ -777,6 +798,7 @@ components:
         amount: 
           type: number
           format: double
+          x-is-money: true
           example: "5.00"
           description: Transaction amount
         creditDebitIndicator: 
@@ -800,6 +822,11 @@ components:
           example: "021"
           description: The cheque/check number
           maximum: 20
+        transactionType: 
+          type: string
+          example: "Refund"
+          description: Descriptive transaction type
+          maximum: 30
     Error:
       type: object
       description: On error, the API consumer will receive an HTTP response with a HTTP Status Code of 4xx or 5xx and a Content-Type of application/problem+json.
@@ -831,6 +858,18 @@ components:
           - "invalid-start-date"
           - "internal-error"
           - "feed-already-connected-in-current-organisation"
+          - "invalid-end-date"
+          - "statement-not-found"
+          - "feed-connected-in-different-organisation"
+          - "feed-already-connected-in-different-organisation"
+          - "bank-feed-not-found"
+          - "invalid-country-specified"
+          - "invalid-organisation-bank-feeds"
+          - "invalid-organisation-multi-currency"
+          - "invalid-feed-connection-for-organisation"
+          - "invalid-user-role"
+          - "account-not-valid"
+          - "feed-not-found-or-already-deleted"
           example: "invalid-application"
     CreditDebitIndicator:
       type: string
@@ -1004,7 +1043,9 @@ components:
       - YER
       - ZAR
       - ZMW
+      - ZMK
       - ZWD
+      - ""
     CountryCode:
       type: string
       example: "GB"
