@@ -1,0 +1,31 @@
+{
+  "branches": [
+    "master"
+  ],
+  "tagFormat": "${version}",
+  "plugins": [
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "angular",
+        "writerOpts": {
+          "headerPartial": "## What's changed",
+          "footerPartial": "\n**Full Changelog**: {{~@root.host}}/{{~@root.owner}}/{{~@root.repository}}/compare/{{previousTag}}...{{version}}"
+        }
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "./scripts/update-version.sh ${nextRelease.version}"
+      }
+    ],
+    "@semantic-release/github",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ]
+  ]
+}
